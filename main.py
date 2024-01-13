@@ -22,15 +22,21 @@ class ProfileGenerator(SeleniumDriver):
         password = gmail_credentials.password
 
         self.driver.get("https://gmail.com/")
-        self.wait_present_element("identifierId", find_by=By.ID).send_keys(email)
-        self.wait_clickable_element("identifierNext", find_by=By.ID).click()
-        self.wait_clickable_element(
-            "//*[@id='password']/div[1]/div/div[1]/input"
-        ).send_keys(password)
-        self.wait_clickable_element("passwordNext", find_by=By.ID).click()
+
+        is_logged_in = "#inbox" in self.driver.current_url
+        if is_logged_in:
+            print("Already logged in to Gmail")
+        else:
+            self.wait_present_element("identifierId", find_by=By.ID).send_keys(email)
+            self.wait_clickable_element("identifierNext", find_by=By.ID).click()
+            self.wait_clickable_element(
+                "//*[@id='password']/div[1]/div/div[1]/input"
+            ).send_keys(password)
+            self.wait_clickable_element("passwordNext", find_by=By.ID).click()
+            print("Successfully logged in to Gmail")
 
 
-def main():
+def main() -> None:
     profile_config = ProfileConfig(
         name="test1",
         credentials=Credentials(

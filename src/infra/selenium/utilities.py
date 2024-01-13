@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -10,6 +11,18 @@ class SeleniumUtilities:
 
     def __init__(self, driver):
         self.driver = driver
+
+    def is_element_present(
+        self,
+        element: str,
+        find_by: str = DEFAULT_FIND_BY,
+        timeout: int = DEFAULT_TIMEOUT,
+    ) -> bool:
+        try:
+            self.wait_present_element(element, find_by, timeout)
+            return True
+        except TimeoutException:
+            return False
 
     def wait_clickable_element(
         self,
