@@ -1,72 +1,32 @@
 import ssl
-import undetected_chromedriver as uc
 from time import sleep
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from src.infra.selenium import SeleniumDriver
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-def wait_for_element(driver, by, by_value, condition="clickable"):
-    wait = WebDriverWait(driver, 30)
+class ProfileGenerator(SeleniumDriver):
+    def __init__(self):
+        super().__init__()
 
-    if condition == "clickable":
-        return wait.until(EC.element_to_be_clickable((by, by_value)))
-    elif condition == "present":
-        return wait.until(EC.presence_of_element_located((by, by_value)))
+    def gmail_login(self) -> None:
+        GMAIL_EMAIL = "minfordmeike@gmail.com"
+        GMAIL_PASSWORD = "k5GRpMSo"
 
-
-def init_driver():
-    options = uc.ChromeOptions()
-    options.add_argument("--ignore-certificate-errors")
-    return uc.Chrome(headless=False, use_subprocess=False)
-
-
-def login_gmail(driver):
-    GMAIL_EMAIL = "minfordmeike@gmail.com"
-    GMAIL_PASSWORD = "k5GRpMSo"
-    GMAIL_RECOVERY_EMAIL = "odunavel@yahoo.com"
-
-    driver.get("https://gmail.com/")
-
-    wait_for_element(driver, by=By.ID, by_value="identifierId", condition="present")
-    driver.find_element(By.ID, "identifierId").send_keys(GMAIL_EMAIL)
-
-    wait_for_element(
-        driver,
-        by=By.XPATH,
-        by_value="//*[@id='identifierNext']/div/button",
-        condition="clickable",
-    )
-    driver.find_element(By.XPATH, "//*[@id='identifierNext']/div/button").click()
-
-    wait_for_element(
-        driver,
-        by=By.XPATH,
-        by_value="//*[@id='password']/div[1]/div/div[1]/input",
-        condition="clickable",
-    )
-    driver.find_element(
-        By.XPATH, "//*[@id='password']/div[1]/div/div[1]/input"
-    ).send_keys(GMAIL_PASSWORD)
-
-    wait_for_element(
-        driver,
-        by=By.XPATH,
-        by_value="//*[@id='passwordNext']/div/button",
-        condition="clickable",
-    )
-    driver.find_element(By.XPATH, "//*[@id='passwordNext']/div/button").click()
-
-    sleep(2)
-    driver.get("https://gmail.com/")
+        self.driver.get("https://gmail.com/")
+        self.wait_present_element("identifierId", find_by=By.ID).send_keys(GMAIL_EMAIL)
+        self.wait_clickable_element("identifierNext", find_by=By.ID).click()
+        self.wait_clickable_element(
+            "//*[@id='password']/div[1]/div/div[1]/input"
+        ).send_keys(GMAIL_PASSWORD)
+        self.wait_clickable_element("passwordNext", find_by=By.ID).click()
 
 
 def main():
-    driver = init_driver()
-    login_gmail(driver)
-    sleep(20000)
+    profile_generator = ProfileGenerator()
+    profile_generator.gmail_login()
+    sleep(10000)
 
 
 if __name__ == "__main__":
