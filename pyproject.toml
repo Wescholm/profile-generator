@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "profile-generator"
+version = "0.1.0"
+description = ""
+authors = ["Nikita <wescholm@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+selenium = "^4.16.0"
+selenium-wire = "^5.1.0"
+webdriver-manager = "^4.0.1"
+undetected-chromedriver = "^3.5.4"
+setuptools = "^69.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
