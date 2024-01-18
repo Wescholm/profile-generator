@@ -40,7 +40,7 @@ class Gmail(LoginServiceBase[Credentials.gmail], SeleniumUtilities):
             self.logger.info("Successfully logged in to Gmail")
 
 
-class Twitter(LoginServiceBase):
+class Twitter(LoginServiceBase[Credentials.twitter]):
     LOGIN_URL = "https://twitter.com/"
 
     @property

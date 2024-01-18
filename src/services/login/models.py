@@ -25,9 +25,3 @@ class Credentials:
     gmail: Gmail
     twitter: Twitter
     discord: Discord
-
-
-@dataclass
-class ProfileConfig:
-    name: str
-    credentials: Credentials
