@@ -1,16 +1,19 @@
 from abc import ABC, abstractmethod
+from typing import Dict, Type, TypeVar, Generic
 from selenium.webdriver.remote.webdriver import WebDriver
 from src.models.profile_generator import Credentials
 from src.infra import Logger
 from service_registry import Service
 
+CredentialType = TypeVar("CredentialType")
 
-class LoginServiceBase(ABC):
+
+class LoginServiceBase(Generic[CredentialType], ABC):
     def __init__(
         self,
         driver: WebDriver,
-        logger: type(Logger.get_logger),
-        credentials: Credentials,
+        logger: Type[Logger.get_logger],
+        credentials: CredentialType,
     ):
         self.driver = driver
         self.logger = logger
@@ -18,28 +21,26 @@ class LoginServiceBase(ABC):
 
     @abstractmethod
     def is_logged_in(self) -> bool:
-        pass
+        raise NotImplementedError("is_logged_in method not implemented")
 
     @abstractmethod
     def login(self) -> None:
-        pass
+        raise NotImplementedError("login method not implemented")
 
 
 class LoginServiceFactory:
-    service_classes = {
-        Service.GMAIL: Gmail,
-        Service.TWITTER: Twitter,
-        Service.DISCORD: Discord,
+    services: Dict[Service, Type[LoginServiceBase]] = {
+        service: getattr(Credentials, service.value) for service in Service
     }
 
     @staticmethod
     def get_login_service(
-        service: Service, driver: WebDriver, logger: Logger, credentials: Credentials
+        service: Service, driver: WebDriver, logger: Logger, credentials: CredentialType
     ) -> LoginServiceBase:
-        service_class = LoginServiceFactory.service_classes.get(service)
-        if not service_class:
-            raise ValueError(f"Service {service} not supported")
-        return service_class(driver, logger, getattr(credentials, service.value))
+        service_cls = LoginServiceFactory.services.get(service)
+        if not service_cls:
+            raise NotImplementedError(f"Service {service} not supported")
+        return service_cls(driver, logger, getattr(credentials, service.value))
 
 
 class LoginService:

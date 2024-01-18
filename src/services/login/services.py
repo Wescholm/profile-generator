@@ -1,3 +1,4 @@
+from typing import Type
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from src.models.profile_generator import Credentials
@@ -6,16 +7,16 @@ from src.infra import Logger
 from login_factory import LoginServiceBase
 
 
-class Gmail(LoginServiceBase, SeleniumUtilities):
+class Gmail(LoginServiceBase[Credentials.gmail], SeleniumUtilities):
     LOGIN_URL = "https://gmail.com/"
 
     def __init__(
         self,
         driver: WebDriver,
-        logger: type(Logger.get_logger),
+        logger: Type[Logger.get_logger],
         credentials: Credentials.gmail,
     ):
-        LoginServiceBase.__init__(self, driver, logger, credentials)
+        super().__init__(driver, logger, credentials)
         SeleniumUtilities.__init__(self, driver)
 
     @property
