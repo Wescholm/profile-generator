@@ -5,7 +5,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from src.infra import Logger
 from models import Credentials
 
-ServiceCredentials = TypeVar("ServiceCredentials", bound=Credentials)
+ServiceCredentials = TypeVar("ServiceCredentials")
 
 
 class Service(Enum):
@@ -52,11 +52,13 @@ class LoginServiceFactory:
 
 
 class LoginService:
-    def __init__(self, driver: WebDriver):
+    def __init__(self, driver: WebDriver, credentials: ServiceCredentials):
         self.driver = driver
+        self.credentials = credentials
 
-    def login(self, service: Service, credentials: ServiceCredentials) -> None:
+    def login(self, service: Service) -> None:
+        service_credentials = getattr(self.credentials, service.value)
         login_service = LoginServiceFactory.get_login_service(
-            service, self.driver, credentials
+            service, self.driver, service_credentials
         )
         login_service.login()

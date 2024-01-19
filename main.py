@@ -25,9 +25,6 @@ class ProfileManager(SeleniumDriver, LoginService):
         os.makedirs(self.PROFILES_MAIN_DIR_PATH, exist_ok=True)
         return os.path.join(self.PROFILES_MAIN_DIR_PATH, self.profile_config.name)
 
-    def login(self, service: Service, credentials: Credentials) -> None:
-        super().login(service, credentials)
-
 
 def main() -> None:
     profile_config = ProfileConfig(
@@ -41,7 +38,9 @@ def main() -> None:
         ),
     )
     profile_manager = ProfileManager(profile_config)
-    profile_manager.login(Service.GMAIL, profile_config.credentials)
+    profile_manager.login(Service.GMAIL)
+    profile_manager.login(Service.TWITTER)
+    profile_manager.login(Service.DISCORD)
 
     exit()
 
