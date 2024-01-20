@@ -12,17 +12,11 @@ class SeleniumUtilities:
     def __init__(self, driver):
         self.driver = driver
 
-    def is_element_present(
-        self,
-        element: str,
-        find_by: str = DEFAULT_FIND_BY,
-        timeout: int = DEFAULT_TIMEOUT,
-    ) -> bool:
-        try:
-            self.wait_present_element(element, find_by, timeout)
-            return True
-        except TimeoutException:
-            return False
+    def wait_for_url_change(self, timeout: int = DEFAULT_TIMEOUT):
+        old_url = self.driver.current_url
+        WebDriverWait(self.driver, timeout).until(
+            lambda driver: driver.current_url != old_url
+        )
 
     def wait_clickable_element(
         self,
