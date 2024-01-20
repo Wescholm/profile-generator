@@ -1,2 +1,2 @@
 from .models import *
-from .login_factory import LoginService, Service
+from .factory import LoginService

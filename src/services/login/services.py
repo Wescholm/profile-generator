@@ -1,22 +1,40 @@
-from typing import Type
+from abc import ABC, abstractmethod
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.by import By
-from src.models.profile_generator import Credentials
 from src.infra.selenium.utilities import SeleniumUtilities
-from src.infra import Logger
-from login_factory import LoginServiceBase
+from src.infra.logger import Logger
+from .models import Credentials
 
 
-class Gmail(LoginServiceBase[Credentials.gmail], SeleniumUtilities):
-    LOGIN_URL = "https://gmail.com/"
+class LoginServiceBase(ABC):
+    logger = Logger(__file__).get_logger()
 
     def __init__(
         self,
         driver: WebDriver,
-        logger: Type[Logger.get_logger],
-        credentials: Credentials.gmail,
+        credentials: Credentials,
     ):
-        super().__init__(driver, logger, credentials)
+        self.driver = driver
+        self.credentials = credentials
+
+    @abstractmethod
+    def is_logged_in(self) -> bool:
+        raise NotImplementedError("is_logged_in method not implemented")
+
+    @abstractmethod
+    def login(self) -> None:
+        raise NotImplementedError("login method not implemented")
+
+
+class Gmail(LoginServiceBase, SeleniumUtilities):
+    BASE_URL = "https://gmail.com/"
+
+    def __init__(
+        self,
+        driver: WebDriver,
+        credentials: Credentials,
+    ):
+        super().__init__(driver, credentials)
         SeleniumUtilities.__init__(self, driver)
 
     @property
@@ -25,7 +43,8 @@ class Gmail(LoginServiceBase[Credentials.gmail], SeleniumUtilities):
 
     def login(self) -> None:
         self.logger.info("Logging to google...")
-        self.driver.get(self.LOGIN_URL)
+        self.driver.get(self.BASE_URL)
+
         if self.is_logged_in:
             self.logger.info("Already logged in to Gmail")
         else:
@@ -37,28 +56,41 @@ class Gmail(LoginServiceBase[Credentials.gmail], SeleniumUtilities):
                 "//*[@id='password']/div[1]/div/div[1]/input"
             ).send_keys(self.credentials.password)
             self.wait_clickable_element("passwordNext", find_by=By.ID).click()
+
+        if self.is_logged_in:
             self.logger.info("Successfully logged in to Gmail")
+        else:
+            raise Exception("Failed to login to Gmail")
 
 
-class Twitter(LoginServiceBase[Credentials.twitter]):
-    LOGIN_URL = "https://twitter.com/"
+class Twitter(LoginServiceBase):
+    BASE_URL = "https://twitter.com/"
 
     @property
     def is_logged_in(self) -> bool:
-        return True
+        return "/home" in self.driver.current_url
 
     def login(self) -> None:
         self.logger.info("Logging to twitter...")
-        self.driver.get("https://twitter.com")
-        self.driver.add_cookie(
-            {
-                "name": "auth_token",
-                "value": self.credentials.token,
-                "domain": ".twitter.com",
-            }
-        )
-        self.driver.get("https://twitter.com/settings/account")
-        self.logger.info("Successfully logged in to Twitter")
+        self.driver.get(self.BASE_URL)
+
+        if self.is_logged_in:
+            self.logger.info("Already logged in to Twitter")
+        else:
+            self.driver.add_cookie(
+                {
+                    "name": "auth_token",
+                    "value": self.credentials.token,
+                    "domain": ".twitter.com",
+                }
+            )
+            self.driver.get(self.BASE_URL)
+
+        if self.is_logged_in:
+            self.logger.info("Successfully logged in to Twitter")
+        else:
+            raise Exception("Failed to login to Twitter")
+
 
 
 class Discord(LoginServiceBase):
@@ -80,8 +112,11 @@ class Discord(LoginServiceBase):
                 document.body.appendChild(document.createElement `iframe`).contentWindow.localStorage.token = `"{}"`
                 location.reload();
                 """.format(
-                    self.credentials.discord.token
+                    self.credentials.token
                 )
             )
-            if not self.is_logged_in:
-                raise Exception("Failed to login to Discord")
+
+        if self.is_logged_in:
+            self.logger.info("Successfully logged in to Discord")
+        else:
+            raise Exception("Failed to login to Discord")

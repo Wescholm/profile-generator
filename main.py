@@ -7,7 +7,10 @@ def main() -> None:
         name="test1",
         credentials=Credentials(
             gmail=Gmail(email="minfordmeike@gmail.com", password="k5GRpMSo"),
-            twitter=Twitter(username="LauraSchwa38625", token="SpE90vSb4d"),
+            twitter=Twitter(
+                username="LauraSchwa38625",
+                token="02aee5020b3daaa1b19477b52e95110b5897bdb4",
+            ),
             discord=Discord(
                 token="OTI2OTU3NTAwNjU2MzkwMjM2.GV-ZsJ.we9xlVGehMJdom4brEqwPzrHYKUnXFowlKCvXc",
             ),
@@ -18,7 +21,7 @@ def main() -> None:
     profile_manager.login(Service.GMAIL)
     profile_manager.login(Service.TWITTER)
     profile_manager.login(Service.DISCORD)
-
+    profile_manager.exit()
     exit()
 
 

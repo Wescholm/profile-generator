@@ -1,1 +1,1 @@
-from manager import ProfileManager, ProfileConfig
+from .manager import ProfileManager, ProfileConfig
