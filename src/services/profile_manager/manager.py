@@ -8,6 +8,7 @@ from src.services.login import LoginService, Credentials
 @dataclass
 class ProfileConfig:
     name: str
+    extensions: Optional[list] = None
     credentials: Optional[Credentials] = None
     proxy: Optional[str] = None
 
@@ -19,7 +20,9 @@ class ProfileManager(SeleniumDriver, LoginService):
     def __init__(self, profile_config: ProfileConfig):
         self.profile_config = profile_config
         super().__init__(
-            profile_dir_path=self.profile_dir_path, proxy=self.profile_config.proxy
+            proxy=profile_config.proxy,
+            extensions=profile_config.extensions,
+            profile_dir_path=self.profile_dir_path,
         )
         LoginService.__init__(self, self.driver, profile_config.credentials)
 

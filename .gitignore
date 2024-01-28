@@ -1,2 +1,5 @@
 misc.xml
 profiles/
+extensions/
+src/infra/selenium/extensions/
+.idea/

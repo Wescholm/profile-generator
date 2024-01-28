@@ -1,10 +1,13 @@
+from src.infra.selenium.driver import Extension
 from src.services.login import Service, Credentials, Gmail, Twitter, Discord
 from src.services.profile_manager import ProfileManager, ProfileConfig
 
 
 def main() -> None:
     profile_config = ProfileConfig(
-        name="test1",
+        name="test3",
+        proxy="",
+        extensions=[Extension.METAMASK],
         credentials=Credentials(
             gmail=Gmail(email="minfordmeike@gmail.com", password="k5GRpMSo"),
             twitter=Twitter(
