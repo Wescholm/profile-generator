@@ -1,11 +1,11 @@
 from src.infra.selenium.driver import Extension
-from src.services.login import Service, Credentials, Gmail, Twitter, Discord
+from src.services.login import Service, Credentials, Gmail, Twitter, Discord, Metamask
 from src.services.profile_manager import ProfileManager, ProfileConfig
 
 
 def main() -> None:
     profile_config = ProfileConfig(
-        name="test3",
+        name="test9",
         proxy="",
         extensions=[Extension.METAMASK],
         credentials=Credentials(
@@ -17,10 +17,15 @@ def main() -> None:
             discord=Discord(
                 token="OTI2OTU3NTAwNjU2MzkwMjM2.GV-ZsJ.we9xlVGehMJdom4brEqwPzrHYKUnXFowlKCvXc",
             ),
+            metamask=Metamask(
+                seed="",
+                password="",
+            ),
         ),
     )
 
     profile_manager = ProfileManager(profile_config)
+    profile_manager.login(Service.METAMASK)
     profile_manager.login(Service.GMAIL)
     profile_manager.login(Service.TWITTER)
     profile_manager.login(Service.DISCORD)

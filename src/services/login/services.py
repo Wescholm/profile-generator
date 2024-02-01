@@ -95,3 +95,76 @@ class Discord(LoginServiceBase):
             )
         )
         sleep(3)
+
+
+class Metamask(LoginServiceBase):
+    LOGIN_URL = "chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html"
+
+    def is_logged_in(self) -> bool:
+        return self.driver.current_url.endswith("/home.html#")
+
+    def perform_login(self) -> None:
+        if self.driver.current_url.endswith("/home.html#unlock"):
+            self._unlock_wallet()
+        else:
+            self._import_wallet()
+
+    def _import_wallet(self) -> None:
+        agree_button = self.wait_clickable_element("//input[@type='checkbox']")
+        agree_button.click()
+
+        import_wallet_button = self.wait_clickable_element(
+            "//button[@data-testid='onboarding-import-wallet']"
+        )
+        import_wallet_button.click()
+
+        not_allow_metrics_button = self.wait_clickable_element(
+            "//button[@data-testid='metametrics-no-thanks']"
+        )
+        not_allow_metrics_button.click()
+
+        seed_inputs = self.wait_present_elements("//input[@type='password']")
+        seeds = self.credentials.seed.split(" ")
+        for i in range(12):
+            seed_inputs[i].send_keys(seeds[i])
+
+        confirm_button = self.wait_clickable_element(
+            "//button[@data-testid='import-srp-confirm']"
+        )
+        confirm_button.click()
+
+        password_inputs = self.wait_present_elements("//input[@type='password']")
+        for password_input in password_inputs:
+            password_input.send_keys(self.credentials.password)
+
+        confirm_checkbox = self.wait_clickable_element("//input[@type='checkbox']")
+        confirm_checkbox.click()
+
+        import_button = self.wait_clickable_element(
+            "//button[starts-with(@data-testid, 'create-password')]"
+        )
+        import_button.click()
+
+        onboarding_complete_button = self.wait_clickable_element(
+            "//button[@data-testid='onboarding-complete-done']"
+        )
+        onboarding_complete_button.click()
+
+        next_button = self.wait_clickable_element(
+            "//button[@data-testid='pin-extension-next']"
+        )
+        next_button.click()
+
+        done_button = self.wait_clickable_element(
+            "//button[@data-testid='pin-extension-done']"
+        )
+        done_button.click()
+
+    def _unlock_wallet(self) -> None:
+        password_input = self.wait_present_element("//input[@type='password']")
+        password_input.send_keys(self.credentials.password)
+
+        unlock_button = self.wait_clickable_element(
+            "//button[@data-testid='unlock-submit']"
+        )
+        unlock_button.click()

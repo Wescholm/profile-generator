@@ -1,10 +1,11 @@
 from selenium.webdriver.remote.webdriver import WebDriver
 from .models import Service, Credentials
-from .services import Gmail, Twitter, Discord
+from .services import Metamask, Gmail, Twitter, Discord
 
 
 class LoginServiceFactory:
     registry = {
+        Service.METAMASK: Metamask,
         Service.GMAIL: Gmail,
         Service.TWITTER: Twitter,
         Service.DISCORD: Discord,

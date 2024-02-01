@@ -4,6 +4,7 @@ from typing import Optional, Any
 
 
 class Service(Enum):
+    METAMASK = "metamask"
     GMAIL = "gmail"
     TWITTER = "twitter"
     DISCORD = "discord"
@@ -28,7 +29,14 @@ class Discord:
 
 
 @dataclass
+class Metamask:
+    seed: str
+    password: str
+
+
+@dataclass
 class Credentials:
-    gmail: Gmail
-    twitter: Twitter
-    discord: Discord
+    gmail: Optional[Gmail] = None
+    twitter: Optional[Twitter] = None
+    discord: Optional[Discord] = None
+    metamask: Optional[Metamask] = None
