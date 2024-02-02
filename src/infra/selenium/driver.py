@@ -2,8 +2,8 @@ import ssl
 import seleniumwire.undetected_chromedriver as uc
 from enum import Enum
 from typing import List
-from .utilities import SeleniumUtilities
 from src.utils import unpack_crx
+from .custom_api import SeleniumCustomAPI
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -12,7 +12,7 @@ class Extension(Enum):
     METAMASK = "extensions/metamask.crx"
 
 
-class SeleniumDriver(SeleniumUtilities):
+class SeleniumDriver(SeleniumCustomAPI):
     HOME_URL = "https://nordvpn.com/what-is-my-ip/"
 
     def __init__(self, **kwargs) -> None:
