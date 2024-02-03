@@ -50,10 +50,10 @@ class Gmail(LoginServiceBase):
         return "#inbox" in self.driver.current_url
 
     def perform_login(self) -> None:
-        self.element.present("identifierId").send_keys(self.credentials.email)
-        self.element.clickable("identifierNext").click()
-        self.element.clickable("password").send_keys(self.credentials.password)
-        self.element.clickable("passwordNext").click()
+        self.clickable.input("identifierId").send_keys(self.credentials.email)
+        self.clickable("identifierNext").click()
+        self.clickable.input("type", "password").send_keys(self.credentials.password)
+        self.clickable("passwordNext").click()
         self.wait_for_url_change()
 
 
@@ -105,28 +105,26 @@ class Metamask(LoginServiceBase):
             self._import_wallet()
 
     def _import_wallet(self) -> None:
-        self.element.clickable.input("type", "checkbox").click()
-        self.element.clickable.button("data-testid", "onboarding-import-wallet").click()
-        self.element.clickable.button("data-testid", "metametrics-no-thanks").click()
+        self.clickable.input("type", "checkbox").click()
+        self.clickable.button("data-testid", "onboarding-import-wallet").click()
+        self.clickable.button("data-testid", "metametrics-no-thanks").click()
 
-        seed_inputs = self.elements.present.input("type", "password")
+        seed_inputs = self.all_elements.present.input("type", "password")
         seeds = self.credentials.seed.split(" ")
         for i in range(12):
             seed_inputs[i].send_keys(seeds[i])
 
-        self.element.clickable.button("data-testid", "import-srp-confirm").click()
-        password_inputs = self.elements.present.input("type", "password")
+        self.clickable.button("data-testid", "import-srp-confirm").click()
+        password_inputs = self.all_elements.present.input("type", "password")
         for password_input in password_inputs:
             password_input.send_keys(self.credentials.password)
 
-        self.element.clickable.input("type", "checkbox").click()
-        self.element.clickable.button.contains("data-testid", "create-password").click()
-        self.element.clickable.button("data-testid", "onboarding-complete-done").click()
-        self.element.clickable.button("data-testid", "pin-extension-next").click()
-        self.element.clickable.button("data-testid", "pin-extension-done").click()
+        self.clickable.input("type", "checkbox").click()
+        self.clickable.button.contains("data-testid", "create-password").click()
+        self.clickable.button("data-testid", "onboarding-complete-done").click()
+        self.clickable.button("data-testid", "pin-extension-next").click()
+        self.clickable.button("data-testid", "pin-extension-done").click()
 
     def _unlock_wallet(self) -> None:
-        self.element.clickable.input("type", "password").send_keys(
-            self.credentials.password
-        )
-        self.element.clickable.button("data-testid", "unlock-submit").click()
+        self.clickable.input("type", "password").send_keys(self.credentials.password)
+        self.clickable.button("data-testid", "unlock-submit").click()
