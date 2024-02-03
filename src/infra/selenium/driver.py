@@ -1,3 +1,4 @@
+import os
 import ssl
 import seleniumwire.undetected_chromedriver as uc
 from enum import Enum
@@ -13,7 +14,9 @@ class Extension(Enum):
 
 
 class SeleniumDriver(SeleniumCustomAPI):
-    HOME_URL = "https://nordvpn.com/what-is-my-ip/"
+    HOME_URL = "file://" + os.path.join(
+        os.getcwd(), "assets", "home-page", "src", "index.html"
+    )
 
     def __init__(self, **kwargs) -> None:
         options = self._init_chrome_options(**kwargs)
