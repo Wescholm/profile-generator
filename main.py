@@ -1,27 +1,18 @@
 from src.infra.selenium.driver import Extension
-from src.services.login import Service, Credentials, Gmail, Twitter, Discord, Metamask
+from src.services.login import Service
 from src.services.profile_manager import ProfileManager, ProfileConfig
+from src.services.credentials_manager import CredentialsManager
 
 
 def main() -> None:
+    profile_id = "test_profile"
+    credentials_manager = CredentialsManager()
+
     profile_config = ProfileConfig(
-        name="test9",
-        proxy="",
+        name=profile_id,
+        proxy="http://kpcihgqp-rotate:p6rvumutevve@p.webshare.io:80/",
         extensions=[Extension.METAMASK],
-        credentials=Credentials(
-            gmail=Gmail(email="minfordmeike@gmail.com", password="k5GRpMSo"),
-            twitter=Twitter(
-                username="LauraSchwa38625",
-                token="02aee5020b3daaa1b19477b52e95110b5897bdb4",
-            ),
-            discord=Discord(
-                token="OTI2OTU3NTAwNjU2MzkwMjM2.GV-ZsJ.we9xlVGehMJdom4brEqwPzrHYKUnXFowlKCvXc",
-            ),
-            metamask=Metamask(
-                seed="",
-                password="",
-            ),
-        ),
+        credentials=credentials_manager.get_credentials(profile_id),
     )
 
     profile_manager = ProfileManager(profile_config)
